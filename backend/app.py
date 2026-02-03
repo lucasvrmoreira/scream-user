@@ -69,6 +69,12 @@ class LogConsulta(db.Model):
 
 
 
+# --- ROTA DE HEALTH CHECK (Para acordar o servidor) ---
+@app.route('/', methods=['GET'])
+def health_check():
+    return jsonify({"status": "online"}), 200
+
+
 
 @app.route('/api/consultar/<lote_bipado>', methods=['GET'])
 def consultar_lote(lote_bipado):

@@ -1,45 +1,50 @@
 import { useState } from 'react';
 import Conferencia from './pages/Conferencia';
 import Login from './pages/Login';
-import Admin from './pages/Admin'; 
+import Admin from './pages/Admin';
+import { SalaDeEspera } from './components/SalaDeEspera'; // <--- Importe a Sala
 
 function App() {
   const [usuario, setUsuario] = useState('');
-  const [tela, setTela] = useState('conferencia'); 
+  const [tela, setTela] = useState('conferencia');
+  
+  // ESTADO NOVO: O servidor já acordou?
+  // Se for Dev, já começa true. Se for Produção, começa false.
+  const [serverPronto, setServerPronto] = useState(import.meta.env.DEV);
 
   const handleLogin = (nome) => {
     setUsuario(nome);
-    setTela('conferencia'); 
+    setTela('conferencia');
   };
 
+  // 1. Se o servidor AINDA NÃO está pronto, mostra a Sala de Espera
+  if (!serverPronto) {
+    return <SalaDeEspera onServerAwake={() => setServerPronto(true)} />;
+  }
+
+  // 2. Se o servidor acordou, mostra o fluxo normal (Login -> App)
   return (
     <div>
       {!usuario ? (
-        
         <Login onLogin={handleLogin} />
       ) : (
         <>
-         
           {tela === 'conferencia' && (
             <>
-              <Conferencia 
-                usuario={usuario} 
-                onLogout={() => setUsuario('')} 
-              />
+              <Conferencia usuario={usuario} onLogout={() => setUsuario('')} />
               
-              {/* BOTÃO SECRETO DE AUDITORIA (Só aparece para DEV-01, TI-01 ou QA01) */}
+              {/* Botão Admin */}
               {['DEV-01', 'TI-01', 'QA01'].includes(usuario) && (
-                <button 
-                  onClick={() => setTela('admin')}
-                  className="fixed bottom-4 right-4 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl transition-all opacity-80 hover:opacity-100 z-50 flex items-center gap-2"
-                >
-                  <span>⚙️</span> AUDITORIA
-                </button>
+                 <button 
+                   onClick={() => setTela('admin')}
+                   className="fixed bottom-4 right-4 bg-slate-800 text-white px-4 py-2 rounded-full font-bold shadow-lg z-50 opacity-80 hover:opacity-100"
+                 >
+                   ⚙️ ADMIN
+                 </button>
               )}
             </>
           )}
 
-          {/* MOSTRA A TELA DE ADMIN */}
           {tela === 'admin' && (
             <Admin onVoltar={() => setTela('conferencia')} />
           )}
