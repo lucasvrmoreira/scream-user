@@ -10,7 +10,7 @@ export default function Admin({ onVoltar }) {
 
   const carregarLogs = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/historico');
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/historico`);
       setLogs(response.data);
     } catch (error) {
       console.error("Erro ao carregar histórico");

@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 
-
 export default function Conferencia({ usuario, onLogout }) {
   const [loteInput, setLoteInput] = useState("");
   const [dados, setDados] = useState(null);
@@ -33,16 +32,16 @@ export default function Conferencia({ usuario, onLogout }) {
     setDados(null);
 
     try {
-      
+      const API_URL = import.meta.env.VITE_API_URL; 
+
       const response = await axios.get(
-       
-        `http://localhost:5000/api/consultar/${encodeURIComponent(loteInput)}`,
+        `${API_URL}/api/consultar/${encodeURIComponent(loteInput)}`,
         {
           params: { usuario: usuario },
         },
       );
       setDados(response.data);
-      setLoteInput(""); 
+      setLoteInput("");
     } catch (error) {
       if (error.response && error.response.status === 403) {
         setErro("ACESSO NEGADO: Usuário Inválido!");
